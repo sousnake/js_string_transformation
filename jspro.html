@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<body style="background-color:#d0e4fe;">
+<h1 id="id6" style="text-align:center; color:orange";> Edit Distance </h1>
+<script>
+function match()
+{      
+     
+    var s1 = document.getElementById("id1").value;
+	var s2 = document.getElementById("id2").value;
+	var dc = parseInt(document.getElementById("id5").value);
+	var ic = parseInt(document.getElementById("id4").value);
+	var rc = parseInt(document.getElementById("id3").value);
+
+	if(isNaN(dc)||isNaN(ic)||isNaN(rc)){
+		alert("Please Enter the Valid Integer Value");
+	}
+	else{    
+        DPA(s1,s2,dc,ic,rc);
+        } }
+function DPA(s1,s2,dc,ic,rc)
+{
+	var m = new Array();
+	var oper = new Array();
+	var i, j;
+	for(i=0; i < s2.length + 1; i++) 
+	{m[i] = new Array();
+	oper[i] = new Array(); }
+        m[0][0]=0;   //initial state
+        oper[0][0] = "start  "; 
+	for(i=0;i<s2.length+1;i++){
+		for(j=0;j<s1.length+1;j++){
+		if(i==0 && j==0){  
+		    continue;           
+		}
+        var minCost = 42945;    
+        var c; 
+		var minoper = "";
+              if(i>0 && j>0 && s1.charAt(j-1)==s2.charAt(i-1)){
+                c = m[i-1][j-1]; 
+	      if (c < minCost) {
+                       minCost = c;
+					   minoper = "right  " ;
+                 }               
+		}
+   
+              if(i>0 && j>0){
+		c= m[i-1][j-1]+rc;	
+		if (c < minCost) {
+                       minCost = c;
+					   minoper = "replace" ;
+                 }
+		} 
+	      if(i>0){
+		c= m[i-1][j]+ic;	
+		if (c < minCost) {
+                       minCost = c;
+					   minoper = "insert " ;
+                  }
+		       } 
+	    if(j>0){
+	//	 document.write(minCost);
+		c= m[i][j-1]+dc;	
+		if (c < minCost) {
+                       minCost = c;
+					   minoper = "delete " ;
+					 //   document.write(minCost);
+                 }
+	//		document.write(minCost);	 
+		} 
+		    //  document.write(m[i][j-1]);
+              m[i][j]=minCost;
+			  oper[i][j]=minoper;
+		//	  document.write(m[i][j]);
+		//	  document.write(s1);
+		//	  document.write(minCost);
+	}
+	//  document.write(m[i][s1.length]+"<br>");
+            
+    }
+  document.write("Optimum cost is :"+ m[s2.length][s1.length]+"<br>");
+  writeOperations(oper,m,s1,s2);
+  }
+function writeOperations(oper,m,s1,s2){
+var startdeltaI =0;
+var startdeltaJ =0;
+var rightdeltaI =1;
+var rightdeltaJ =1;
+var replacedeltaI =1;
+var replacedeltaJ =1;
+var deletedeltaI =0; 
+var deletedeltaJ =1;
+var insertdeltaI =1;
+var insertdeltaJ =0;
+var i=s2.length;
+var j=s1.length;
+var k =new Array();
+var p=0;
+while(!(i==0 && j==0)){
+var op = oper[i][j];
+k[p]=  op+"/\t/"+s2.substring(0,i)+"*"+s1.substring(j)+"<br>";
+//document.write(k[p]);
+p++;
+//document.write(op+"  "+s2.substring(0,i)+"*"+s1.substring(j)+"<br>");
+if(op=="start  ")
+{
+i=i;
+j=j;
+}
+else if(op=="right  "){
+i = i-rightdeltaI;
+j=  j-rightdeltaJ;
+}
+else if(op=="replace"){
+i = i-replacedeltaI;
+j=  j-replacedeltaJ;
+}
+else if(op=="delete "){
+i = i-deletedeltaI;
+j=  j-deletedeltaJ;
+}
+else{
+i = i-insertdeltaI;
+j=  j-insertdeltaJ;
+}
+
+}
+document.write("start"+"/\t/"+s2.substring(0,i)+"*"+s1.substring(j)+"<br>");
+for(var l=p-1;l>=0;l--)
+{document.write(k[l]);}
+}
+
+</script>
+<form>
+<table>
+<tr><td>Enter 1st String:</td>           
+<td> <input type="text" id="id1" name="String1"></tr></td>
+<tr><td>Enter 2nd String:</td>
+<td> <input type="text" id="id2"name="String2"></tr></td>
+<tr><td>Replacement cost:</td>
+<td> <input type="text" id="id3" name="rcost"></tr></td>
+<tr><td>Insertion cost:</td>
+<td> <input type="text" id="id4" name="icost"></tr></td>
+<tr><td>Deletion cost:</td>
+<td> <input type="text" id="id5" name="dcost"></tr></td>
+</table></form>
+<button type="button" onclick="match()">Matching Cost</button>
+
+</body>
+</html>
